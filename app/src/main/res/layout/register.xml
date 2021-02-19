@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/texturedbackground" >
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="112dp"
+        android:layout_marginLeft="112dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="112dp"
+        android:layout_marginRight="112dp"
+        android:fontFamily="casual"
+        android:text="Register"
+        android:textColor="@color/black"
+        android:textSize="50sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/etNewName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:ems="10"
+        android:fontFamily="casual"
+        android:hint="Enter Name"
+        android:inputType="textPersonName"
+        android:textSize="25sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+    <EditText
+        android:id="@+id/etNewPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:fontFamily="casual"
+        android:hint="Enter Password"
+        android:inputType="textPassword"
+        android:textSize="25sp"
+        app:layout_constraintEnd_toEndOf="@+id/etNewName"
+        app:layout_constraintStart_toStartOf="@+id/etNewName"
+        app:layout_constraintTop_toBottomOf="@+id/etNewName" />
+
+    <EditText
+        android:id="@+id/etNewEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:fontFamily="casual"
+        android:hint="Enter Email"
+        android:inputType="textEmailAddress"
+        android:textSize="25sp"
+        app:layout_constraintEnd_toEndOf="@+id/etNewPassword"
+        app:layout_constraintStart_toStartOf="@+id/etNewPassword"
+        app:layout_constraintTop_toBottomOf="@+id/etNewPassword" />
+
+    <Button
+        android:id="@+id/btnRegister"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:fontFamily="casual"
+        android:text="Register"
+        android:textSize="18sp"
+        app:backgroundTint="#FF5722"
+        app:layout_constraintStart_toStartOf="@+id/etNewEmail"
+        app:layout_constraintTop_toBottomOf="@+id/etNewEmail" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="676dp"
+        android:layout_height="975dp"
+        android:layout_marginTop="60dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.758"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.003"
+        app:srcCompat="@drawable/pencils" />
+</androidx.constraintlayout.widget.ConstraintLayout>
