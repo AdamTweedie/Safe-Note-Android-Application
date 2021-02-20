@@ -6,6 +6,17 @@
     android:layout_height="match_parent"
     android:background="@drawable/texturedbackground">
 
+    <Button
+        android:id="@+id/btnCreateEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="3dp"
+        android:backgroundTint="#FF5722"
+        android:text="New Email"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <TextView
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
@@ -123,6 +134,96 @@
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/editTextTextPersonName2"
+            android:layout_width="359dp"
+            android:layout_height="34dp"
+            android:layout_marginStart="25dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="Name"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="@+id/textView6"
+            app:layout_constraintTop_toBottomOf="@+id/textView6" />
+
+        <EditText
+            android:id="@+id/editTextTextPersonName8"
+            android:layout_width="359dp"
+            android:layout_height="34dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="Name"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="@+id/editTextTextPersonName2"
+            app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName2" />
+
+        <EditText
+            android:id="@+id/editTextTextPersonName9"
+            android:layout_width="359dp"
+            android:layout_height="34dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="Name"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="@+id/editTextTextPersonName8"
+            app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName8" />
+
+        <EditText
+            android:id="@+id/editTextTextPersonName10"
+            android:layout_width="359dp"
+            android:layout_height="34dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="Name"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="@+id/editTextTextPersonName9"
+            app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName9" />
+
+        <EditText
+            android:id="@+id/editTextTextPersonName11"
+            android:layout_width="359dp"
+            android:layout_height="34dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="Name"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="@+id/editTextTextPersonName10"
+            app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName10" />
+
+        <EditText
+            android:id="@+id/editTextTextPersonName12"
+            android:layout_width="359dp"
+            android:layout_height="34dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="Name"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="@+id/editTextTextPersonName11"
+            app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName11" />
+
+        <EditText
+            android:id="@+id/editTextTextPersonName13"
+            android:layout_width="359dp"
+            android:layout_height="34dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="Name"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="@+id/editTextTextPersonName12"
+            app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName12" />
+
+        <EditText
+            android:id="@+id/editTextTextPersonName14"
+            android:layout_width="359dp"
+            android:layout_height="34dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="Name"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="@+id/editTextTextPersonName13"
+            app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName13" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <Button

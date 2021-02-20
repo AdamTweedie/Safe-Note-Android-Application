@@ -3,7 +3,6 @@ package com.example.safe_note;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -29,7 +28,7 @@ public class NotePage extends AppCompatActivity{
     public ArrayList<EditRecyclerView> ervArrayListTwo;
     CustomAdapter customAdapterOne;
     CustomAdapter customAdapterTwo;
-    Button logOut;
+    Button logOut, newEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -69,6 +68,7 @@ public class NotePage extends AppCompatActivity{
         displayInfo.setText(display);
 
         logOut = (Button) findViewById(R.id.btnLogOut);
+        newEmail = (Button) findViewById(R.id.btnCreateEmail);
         recyclerViewOne = (RecyclerView) findViewById(R.id.shoppingRecyclerView);
         recyclerViewTwo = (RecyclerView) findViewById(R.id.toDoRecyclerView);
 
@@ -95,6 +95,17 @@ public class NotePage extends AppCompatActivity{
                 Toast.makeText(context, "Goodbye!", Toast.LENGTH_LONG).show();
             }
         });
+
+        newEmail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent createEmail = new Intent(NotePage.this, Email.class);
+                startActivity(createEmail);
+                finish();
+            }
+        });
+
+
     }
 
     private ArrayList<EditRecyclerView> populateList(){
@@ -108,11 +119,5 @@ public class NotePage extends AppCompatActivity{
         return list;
     }
 
-    RecyclerView.LayoutManager mLayoutManager = new RecyclerView.LayoutManager() {
-        @Override
-        public RecyclerView.LayoutParams generateDefaultLayoutParams() {
-            return null;
-        }
-    };
 
 }
