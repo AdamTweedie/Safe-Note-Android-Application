@@ -14,8 +14,6 @@ import androidx.appcompat.app.AppCompatActivity;
 public class Email extends AppCompatActivity {
 
     private EditText emailTo, emailSubject, emailMessage;
-    private Button send;
-    private ImageButton undoPage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,8 +23,8 @@ public class Email extends AppCompatActivity {
         emailTo = (EditText) findViewById(R.id.etRecipitantEmail);
         emailSubject = (EditText) findViewById(R.id.etNewEmailSubject);
         emailMessage = (EditText) findViewById(R.id.etNewEmailMessage);
-        send = (Button) findViewById(R.id.btnSendEmail);
-        undoPage = (ImageButton) findViewById((R.id.btnBackToNotePage));
+        Button send = (Button) findViewById(R.id.btnSendEmail);
+        ImageButton undoPage = (ImageButton) findViewById((R.id.btnBackToNotePage));
         Context context = getApplicationContext();
 
         send.setOnClickListener(new View.OnClickListener() {
