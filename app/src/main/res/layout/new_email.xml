@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/texturedbackground">
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="589dp"
+        android:layout_height="306dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/pencils" />
+
+    <EditText
+        android:id="@+id/etRecipitantEmail"
+        android:layout_width="213dp"
+        android:layout_height="51dp"
+        android:layout_marginStart="99dp"
+        android:layout_marginTop="142dp"
+        android:layout_marginEnd="99dp"
+        android:cursorVisible="false"
+        android:ems="10"
+        android:fontFamily="casual"
+        android:hint="Recipitant Email"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/etNewEmailSubject"
+        android:layout_width="213dp"
+        android:layout_height="51dp"
+        android:layout_marginTop="10dp"
+        android:ems="10"
+        android:fontFamily="casual"
+        android:hint="Email Subject"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="@+id/etRecipitantEmail"
+        app:layout_constraintStart_toStartOf="@+id/etRecipitantEmail"
+        app:layout_constraintTop_toBottomOf="@+id/etRecipitantEmail" />
+
+    <EditText
+        android:id="@+id/etNewEmailMessage"
+        android:layout_width="213dp"
+        android:layout_height="51dp"
+        android:layout_marginTop="10dp"
+        android:ems="10"
+        android:fontFamily="casual"
+        android:hint="Message"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="@+id/etNewEmailSubject"
+        app:layout_constraintStart_toStartOf="@+id/etNewEmailSubject"
+        app:layout_constraintTop_toBottomOf="@+id/etNewEmailSubject" />
+
+    <Button
+        android:id="@+id/btnSendEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:backgroundTint="#FF5722"
+        android:text="Send"
+        app:layout_constraintStart_toStartOf="@+id/etNewEmailMessage"
+        app:layout_constraintTop_toBottomOf="@+id/etNewEmailMessage" />
+
+    <ImageButton
+        android:id="@+id/btnBackToNotePage"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="7dp"
+        android:layout_marginTop="7dp"
+        android:background="#00FF5722"
+        android:backgroundTint="#FF5722"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_revert" />
+</androidx.constraintlayout.widget.ConstraintLayout>
