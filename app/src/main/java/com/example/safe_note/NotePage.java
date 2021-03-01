@@ -28,7 +28,7 @@ public class NotePage extends AppCompatActivity{
     public ArrayList<EditRecyclerView> ervArrayListTwo;
     CustomAdapter customAdapterOne;
     CustomAdapter customAdapterTwo;
-    Button logOut, newEmail;
+    Button logOut;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -68,7 +68,6 @@ public class NotePage extends AppCompatActivity{
         displayInfo.setText(display);
 
         logOut = (Button) findViewById(R.id.btnLogOut);
-        newEmail = (Button) findViewById(R.id.btnCreateEmail);
         recyclerViewOne = (RecyclerView) findViewById(R.id.shoppingRecyclerView);
         recyclerViewTwo = (RecyclerView) findViewById(R.id.toDoRecyclerView);
 
@@ -95,17 +94,6 @@ public class NotePage extends AppCompatActivity{
                 Toast.makeText(context, "Goodbye!", Toast.LENGTH_LONG).show();
             }
         });
-
-        newEmail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent createEmail = new Intent(NotePage.this, Email.class);
-                startActivity(createEmail);
-                finish();
-            }
-        });
-
-
     }
 
     private ArrayList<EditRecyclerView> populateList(){
