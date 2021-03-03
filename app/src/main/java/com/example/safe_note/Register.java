@@ -47,7 +47,7 @@ public class Register extends AppCompatActivity {
             public void onClick(View v) {
 
                 // Encrypted Shared Preferences to store Username and Password
-                //https://developer.android.com/reference/androidx/security/crypto/EncryptedSharedPreferences
+                // https://developer.android.com/reference/androidx/security/crypto/EncryptedSharedPreferences
                 SharedPreferences encryptedPreferences = null;
                 try {
                     encryptedPreferences = EncryptedSharedPreferences.create(

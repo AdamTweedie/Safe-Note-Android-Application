@@ -31,6 +31,15 @@ public class MainActivity extends AppCompatActivity {
         btnLogin = (Button) findViewById(R.id.btnLogin);
         btnSignUp = (Button) findViewById(R.id.btnSignUp);
 
+        // shared preferences for Notes (not working, try savedInstanceState())
+        SharedPreferences result = getSharedPreferences("SaveData", Context.MODE_PRIVATE);
+        String value = result.getString("Value", " β β ");
+        SharedPreferences.Editor spNoteOneEditor = result.edit();
+        System.out.println("SharedPref value from within MainActivity.java " + value);
+        spNoteOneEditor.putString("Value", value);
+        spNoteOneEditor.apply();
+
+
         String masterKeyAlias = null;
         try {
             masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);
@@ -49,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
                 String incorrectDetails = "Username or Password is Incorrect.";
 
                 //SharedPreferences preferences = getSharedPreferences("MYPREFS", MODE_PRIVATE);
+
                 SharedPreferences encryptedPreferences = null;
                 try {
                     encryptedPreferences = EncryptedSharedPreferences.create(
@@ -63,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 String userDetails = encryptedPreferences.getString(user + password + "data", incorrectDetails);
-
                 SharedPreferences.Editor editor = encryptedPreferences.edit();
                 editor.putString("user_display", userDetails);
                 editor.commit();

@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.content.Context;
@@ -28,7 +29,10 @@ public class NotePage extends AppCompatActivity{
     public ArrayList<EditRecyclerView> ervArrayListTwo;
     CustomAdapter customAdapterOne;
     CustomAdapter customAdapterTwo;
-    Button logOut;
+    EditText etDate, etTitle, etBody;
+    TextView tvDate, tvTitle, tvBody;
+    Button logOut, createNote;
+    SharedPreferences spNoteOne;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -38,6 +42,16 @@ public class NotePage extends AppCompatActivity{
 
         // Encrypted Shared Preferences used to store user credentials to the application
         //SharedPreferences preferences = getSharedPreferences("MYPREFS", MODE_PRIVATE);
+
+        logOut = (Button) findViewById(R.id.btnLogOut);
+        recyclerViewOne = (RecyclerView) findViewById(R.id.shoppingRecyclerView);
+        recyclerViewTwo = (RecyclerView) findViewById(R.id.toDoRecyclerView);
+
+        ervArrayListOne = populateList();
+        ervArrayListTwo = populateList();
+
+        customAdapterOne = new CustomAdapter(this, ervArrayListOne);
+        customAdapterTwo = new CustomAdapter(this, ervArrayListTwo);
 
         String masterKeyAlias = null;
         try {
@@ -67,22 +81,56 @@ public class NotePage extends AppCompatActivity{
         TextView displayInfo = (TextView) findViewById(R.id.textView3);
         displayInfo.setText(display);
 
-        logOut = (Button) findViewById(R.id.btnLogOut);
-        recyclerViewOne = (RecyclerView) findViewById(R.id.shoppingRecyclerView);
-        recyclerViewTwo = (RecyclerView) findViewById(R.id.toDoRecyclerView);
-
-        ervArrayListOne = populateList();
-        ervArrayListTwo = populateList();
-
-        customAdapterOne = new CustomAdapter(this, ervArrayListOne);
-        customAdapterTwo = new CustomAdapter(this, ervArrayListTwo);
-
         recyclerViewOne.setAdapter(customAdapterOne);
         recyclerViewTwo.setAdapter(customAdapterTwo);
 
         recyclerViewOne.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false));
         recyclerViewTwo.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false));
 
+        /** the following code is for the functionality of the main note section, just got
+         * the SharedPreferences working so that is saves state between activities.**/
+
+        createNote = (Button) findViewById(R.id.btnCreate);
+        etDate = (EditText) findViewById(R.id.etDate);
+        etTitle = (EditText) findViewById(R.id.etTitle);
+        etBody = (EditText) findViewById(R.id.etBody);
+        tvDate = (TextView) findViewById(R.id.tvDate);
+        tvTitle = (TextView) findViewById(R.id.tvTitle);
+        tvBody = (TextView) findViewById(R.id.tvBody);
+
+        spNoteOne = getSharedPreferences("SaveData", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = spNoteOne.edit();
+
+        createNote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("EditText Note One: " + etDate.getText().toString());
+                editor.putString("Value", etDate.getText().toString() + "β" + etTitle.getText().toString() + "β" + etBody.getText().toString());
+                editor.apply();
+                // cant get value to be stored back in tv when reloaded
+                String value = spNoteOne.getString("Value", " β β ");
+                // this needs changing below
+                tvDate.setText(etDate.getText().toString());
+                tvBody.setText(etBody.getText().toString());
+                tvTitle.setText(etTitle.getText().toString());
+            }
+        });
+
+        String string = spNoteOne.getString("Value", " β β ");
+        System.out.println("Full string - " + string);
+        String parts[] = string.split("β");
+        String date = parts[0];
+        String title = parts[1];
+        String body = parts[2];
+        System.out.println("Date - " + date);
+        System.out.println("Title - " + title);
+        System.out.println("Body - " + body);
+
+        tvDate.setText(date);
+        tvTitle.setText(title);
+        tvBody.setText(body);
+
+        // Add functionality for Log Out button.
         logOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,6 +142,7 @@ public class NotePage extends AppCompatActivity{
                 Toast.makeText(context, "Goodbye!", Toast.LENGTH_LONG).show();
             }
         });
+
     }
 
     private ArrayList<EditRecyclerView> populateList(){
