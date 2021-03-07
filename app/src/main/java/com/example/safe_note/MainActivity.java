@@ -32,12 +32,15 @@ public class MainActivity extends AppCompatActivity {
         btnSignUp = (Button) findViewById(R.id.btnSignUp);
 
         // shared preferences for Notes (not working, try savedInstanceState())
-        SharedPreferences result = getSharedPreferences("SaveData", Context.MODE_PRIVATE);
-        String value = result.getString("Value", " β β ");
-        SharedPreferences.Editor spNoteOneEditor = result.edit();
-        System.out.println("SharedPref value from within MainActivity.java " + value);
-        spNoteOneEditor.putString("Value", value);
-        spNoteOneEditor.apply();
+        SharedPreferences result = getSharedPreferences("TimedNote", Context.MODE_PRIVATE);
+        String noteTitle = result.getString("Title", "");
+        String noteBody = result.getString("Body", "");
+        String refTime = result.getString("EndTime", "0:0:0");
+        SharedPreferences.Editor timedNoteEditor = result.edit();
+        timedNoteEditor.putString("EndTime", refTime);
+        timedNoteEditor.putString("Title", noteTitle);
+        timedNoteEditor.putString("Body", noteBody);
+        timedNoteEditor.apply();
 
 
         String masterKeyAlias = null;
@@ -75,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
                 String userDetails = encryptedPreferences.getString(user + password + "data", incorrectDetails);
                 SharedPreferences.Editor editor = encryptedPreferences.edit();
                 editor.putString("user_display", userDetails);
-                editor.commit();
+                editor.apply();
 
                 String display = encryptedPreferences.getString("user_display", "");
 

@@ -1,5 +1,7 @@
 package com.example.safe_note;
 
+import android.content.SharedPreferences;
+
 public class EditRecyclerView {
 
     private String editTextValue;

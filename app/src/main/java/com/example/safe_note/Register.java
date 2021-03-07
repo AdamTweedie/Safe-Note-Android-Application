@@ -32,6 +32,10 @@ public class Register extends AppCompatActivity {
         email = (EditText) findViewById(R.id.etNewEmail);
         btnRegister = (Button) findViewById(R.id.btnRegister);
 
+        if (userName.length() < 3) {
+            userName.setText("");
+        }
+
         String masterKeyAlias = null;
         try {
             masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);

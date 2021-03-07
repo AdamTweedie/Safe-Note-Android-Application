@@ -2,22 +2,30 @@ package com.example.safe_note;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.content.Context;
+import android.widget.Toast;
+
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKeys;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+
 
 public class NotePage extends AppCompatActivity{
 
@@ -29,21 +37,20 @@ public class NotePage extends AppCompatActivity{
     public ArrayList<EditRecyclerView> ervArrayListTwo;
     CustomAdapter customAdapterOne;
     CustomAdapter customAdapterTwo;
-    EditText etDate, etTitle, etBody;
-    TextView tvDate, tvTitle, tvBody;
-    Button logOut, createNote;
-    SharedPreferences spNoteOne;
+    EditText etTimeHour, etTimeMin, etTitle, etBody;
+    TextView tvCount, tvTitle, tvBody;
+    Button logOut, createNote, delete;
+    SharedPreferences spTimedNote;
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState){
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.note_page);
 
-        // Encrypted Shared Preferences used to store user credentials to the application
-        //SharedPreferences preferences = getSharedPreferences("MYPREFS", MODE_PRIVATE);
-
         logOut = (Button) findViewById(R.id.btnLogOut);
+        delete = (Button) findViewById(R.id.btnDelete);
         recyclerViewOne = (RecyclerView) findViewById(R.id.shoppingRecyclerView);
         recyclerViewTwo = (RecyclerView) findViewById(R.id.toDoRecyclerView);
 
@@ -64,6 +71,7 @@ public class NotePage extends AppCompatActivity{
         Context context = getApplicationContext();
 
         SharedPreferences encryptedPreferences = null;
+
         try {
             encryptedPreferences = EncryptedSharedPreferences.create(
                     "encrypted_credentials",
@@ -75,8 +83,8 @@ public class NotePage extends AppCompatActivity{
         } catch (GeneralSecurityException | IOException e) {
             e.printStackTrace();
         }
-        String display = encryptedPreferences.getString("user_display", "");
 
+        String display = encryptedPreferences.getString("user_display", "");
         // Display the user that is logged in
         TextView displayInfo = (TextView) findViewById(R.id.textView3);
         displayInfo.setText(display);
@@ -91,46 +99,82 @@ public class NotePage extends AppCompatActivity{
          * the SharedPreferences working so that is saves state between activities.**/
 
         createNote = (Button) findViewById(R.id.btnCreate);
-        etDate = (EditText) findViewById(R.id.etDate);
+        etTimeHour = (EditText) findViewById(R.id.etTimeHour);
+        etTimeMin = (EditText) findViewById(R.id.etTimeMin);
         etTitle = (EditText) findViewById(R.id.etTitle);
         etBody = (EditText) findViewById(R.id.etBody);
-        tvDate = (TextView) findViewById(R.id.tvDate);
+        tvCount = (TextView) findViewById(R.id.tvCountDown);
         tvTitle = (TextView) findViewById(R.id.tvTitle);
         tvBody = (TextView) findViewById(R.id.tvBody);
 
-        spNoteOne = getSharedPreferences("SaveData", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = spNoteOne.edit();
+        LocalTime now = LocalTime.now();
+
+        spTimedNote = getSharedPreferences("TimedNote", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = spTimedNote.edit();
 
         createNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("EditText Note One: " + etDate.getText().toString());
-                editor.putString("Value", etDate.getText().toString() + "β" + etTitle.getText().toString() + "β" + etBody.getText().toString());
+                int timeHr = Integer.parseInt(etTimeHour.getText().toString());
+                int timeMin = Integer.parseInt(etTimeMin.getText().toString());
+                LocalTime refTime = LocalTime.of(timeHr, timeMin);
+                editor.putString("EndTime", String.valueOf(refTime));
+                editor.putString("Title", etTitle.getText().toString());
+                editor.putString("Body", etBody.getText().toString());
                 editor.apply();
-                // cant get value to be stored back in tv when reloaded
-                String value = spNoteOne.getString("Value", " β β ");
-                // this needs changing below
-                tvDate.setText(etDate.getText().toString());
+                tvCount.setText("End time " + etTimeHour.getText().toString() + ":" + etTimeMin.getText().toString());
                 tvBody.setText(etBody.getText().toString());
                 tvTitle.setText(etTitle.getText().toString());
+
+                if (now.isAfter(refTime)) {
+                    tvCount.setText("Safe-Note has deleted this note, create a new one.");
+                    tvBody.setText("");
+                    tvTitle.setText("");
+                    editor.remove("EndTime");
+                    editor.remove("Title");
+                    editor.remove("Body");
+                    editor.apply();
+                }
+
             }
         });
 
-        String string = spNoteOne.getString("Value", " β β ");
-        System.out.println("Full string - " + string);
-        String parts[] = string.split("β");
-        String date = parts[0];
-        String title = parts[1];
-        String body = parts[2];
-        System.out.println("Date - " + date);
-        System.out.println("Title - " + title);
-        System.out.println("Body - " + body);
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tvCount.setText("");
+                tvTitle.setText("");
+                tvBody.setText("");
+                editor.remove("EndTime");
+                editor.remove("Title");
+                editor.remove("Body");
+                editor.apply();
+            }
+        });
 
-        tvDate.setText(date);
-        tvTitle.setText(title);
-        tvBody.setText(body);
+         String title = spTimedNote.getString("Title", "");
+         String body = spTimedNote.getString("Body", "");
+         String endTime = spTimedNote.getString("EndTime", "0:0:0");
+         tvCount.setText("Note will delete at: " + endTime);
+         tvTitle.setText(title);
+         tvBody.setText(body);
 
-        // Add functionality for Log Out button.
+         if (endTime == "0:0:0"){
+             tvCount.setText("Time is up");
+             tvBody.setText("");
+             tvTitle.setText("");
+         } else {
+             if (now.isAfter(LocalTime.parse(endTime))) {
+                 tvCount.setText("Time is up");
+                 tvBody.setText("");
+                 tvTitle.setText("");
+                 editor.remove("EndTime");
+                 editor.remove("Title");
+                 editor.remove("Body");
+                 editor.apply();
+             }
+         }
+
         logOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -142,8 +186,9 @@ public class NotePage extends AppCompatActivity{
                 Toast.makeText(context, "Goodbye!", Toast.LENGTH_LONG).show();
             }
         });
-
     }
+
+
 
     private ArrayList<EditRecyclerView> populateList(){
 
@@ -155,6 +200,4 @@ public class NotePage extends AppCompatActivity{
         }
         return list;
     }
-
-
 }
