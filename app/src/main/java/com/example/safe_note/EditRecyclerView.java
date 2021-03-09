@@ -1,9 +1,9 @@
 package com.example.safe_note;
 
-import android.content.SharedPreferences;
-
 public class EditRecyclerView {
-
+    /**
+     * Provides setter and getter methods for recycler view edit text values.
+     */
     private String editTextValue;
 
     public String getEditTextValue(){
