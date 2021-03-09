@@ -6,8 +6,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DigitalClock;
 import android.widget.EditText;
+import android.widget.TextClock;
 import android.widget.TextView;
 import android.content.Context;
 import android.widget.Toast;
@@ -19,11 +22,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKeys;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 
@@ -41,6 +42,9 @@ public class NotePage extends AppCompatActivity{
     TextView tvCount, tvTitle, tvBody;
     Button logOut, createNote, delete;
     SharedPreferences spTimedNote;
+    TextClock clock;
+    ViewGroup vg;
+
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -106,38 +110,81 @@ public class NotePage extends AppCompatActivity{
         tvCount = (TextView) findViewById(R.id.tvCountDown);
         tvTitle = (TextView) findViewById(R.id.tvTitle);
         tvBody = (TextView) findViewById(R.id.tvBody);
+        clock = (TextClock) findViewById(R.id.textClock);
 
         LocalTime now = LocalTime.now();
 
         spTimedNote = getSharedPreferences("TimedNote", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = spTimedNote.edit();
 
+
         createNote.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.R)
             @Override
             public void onClick(View v) {
                 int timeHr = Integer.parseInt(etTimeHour.getText().toString());
                 int timeMin = Integer.parseInt(etTimeMin.getText().toString());
-                LocalTime refTime = LocalTime.of(timeHr, timeMin);
-                editor.putString("EndTime", String.valueOf(refTime));
-                editor.putString("Title", etTitle.getText().toString());
-                editor.putString("Body", etBody.getText().toString());
-                editor.apply();
-                tvCount.setText("End time " + etTimeHour.getText().toString() + ":" + etTimeMin.getText().toString());
-                tvBody.setText(etBody.getText().toString());
-                tvTitle.setText(etTitle.getText().toString());
+                LocalTime refTime;
+                String localHr, localMin;
+                int millis = 0;
+                if (timeHr < 24 && timeHr > 0 && timeMin > 0 && timeMin < 60){
+                    refTime = LocalTime.of(timeHr, timeMin);
+                    String[] parts = now.toString().split(":");
+                    localHr = parts[0];
+                    localMin = parts[1];
+                    if (timeHr > Integer.parseInt(localHr) && timeMin > Integer.parseInt(localMin)) {
+                        millis = (timeHr - Integer.parseInt(localHr))*3600000 + (timeMin - Integer.parseInt(localMin))*60000;
+                    }
+                    if (timeHr < Integer.parseInt(localHr)) {
+                        Toast.makeText(context, "Invalid Time, try again", Toast.LENGTH_LONG).show();
+                        tvCount.setText("");
+                        tvBody.setText("");
+                        tvTitle.setText("");
+                        editor.remove("EndTime");
+                        editor.remove("Title");
+                        editor.remove("Body");
+                        editor.apply();
+                    }
+                    if (timeHr > Integer.parseInt(localHr) && timeMin < Integer.parseInt(localMin)) {
+                        millis = (timeHr - Integer.parseInt(localHr))*3600000 - (timeMin - Integer.parseInt(localMin))*60000;
+                    }
+                    if (timeHr == Integer.parseInt(localHr) && timeMin > Integer.parseInt(localMin)) {
+                        millis = (timeMin - Integer.parseInt(localMin))*60000;
+                    }
 
-                if (now.isAfter(refTime)) {
-                    tvCount.setText("Safe-Note has deleted this note, create a new one.");
-                    tvBody.setText("");
-                    tvTitle.setText("");
-                    editor.remove("EndTime");
-                    editor.remove("Title");
-                    editor.remove("Body");
+                    System.out.println("Millis: " + millis);
+                    editor.putString("EndTime", String.valueOf(refTime));
+                    editor.putString("Title", etTitle.getText().toString());
+                    editor.putString("Body", etBody.getText().toString());
                     editor.apply();
-                }
+                    String endTime = spTimedNote.getString("EndTime", "0:0:0");
+                    tvCount.setText(endTime);
+                    tvBody.setText(etBody.getText().toString());
+                    tvTitle.setText(etTitle.getText().toString());
 
+                    new CountDownTimer((millis), 1000) {
+
+                        public void onTick(long millisUntilFinished) {
+
+                        }
+                        public void onFinish() {
+                            Toast.makeText(context, "Time Up! Note Destroyed.", Toast.LENGTH_LONG).show();
+                            tvCount.setText("");
+                            tvBody.setText("");
+                            tvTitle.setText("");
+                            editor.remove("EndTime");
+                            editor.remove("Title");
+                            editor.remove("Body");
+                            editor.apply();
+                        }
+                    }.start();
+
+                } else {
+                    Toast.makeText(context, "Invalid Time, try again", Toast.LENGTH_LONG).show();
+                }
             }
         });
+
 
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -155,17 +202,22 @@ public class NotePage extends AppCompatActivity{
          String title = spTimedNote.getString("Title", "");
          String body = spTimedNote.getString("Body", "");
          String endTime = spTimedNote.getString("EndTime", "0:0:0");
-         tvCount.setText("Note will delete at: " + endTime);
+         tvCount.setText(endTime);
          tvTitle.setText(title);
          tvBody.setText(body);
 
-         if (endTime == "0:0:0"){
-             tvCount.setText("Time is up");
+        System.out.println("endTime: " + endTime);
+
+
+
+         if (endTime.equals("0:0:0")){
+             tvCount.setText("");
              tvBody.setText("");
              tvTitle.setText("");
+             Toast.makeText(this, "Timer up, Note destroyed!", Toast.LENGTH_LONG).show();
          } else {
              if (now.isAfter(LocalTime.parse(endTime))) {
-                 tvCount.setText("Time is up");
+                 tvCount.setText("");
                  tvBody.setText("");
                  tvTitle.setText("");
                  editor.remove("EndTime");
@@ -187,7 +239,6 @@ public class NotePage extends AppCompatActivity{
             }
         });
     }
-
 
 
     private ArrayList<EditRecyclerView> populateList(){

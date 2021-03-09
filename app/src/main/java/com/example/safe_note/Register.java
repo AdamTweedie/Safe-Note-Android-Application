@@ -32,10 +32,6 @@ public class Register extends AppCompatActivity {
         email = (EditText) findViewById(R.id.etNewEmail);
         btnRegister = (Button) findViewById(R.id.btnRegister);
 
-        if (userName.length() < 3) {
-            userName.setText("");
-        }
-
         String masterKeyAlias = null;
         try {
             masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);
@@ -49,39 +45,41 @@ public class Register extends AppCompatActivity {
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (userName.length() > 3 && password.length() > 3 && email.getText().toString().contains("@")) {
+                    // Encrypted Shared Preferences to store Username and Password
+                    // https://developer.android.com/reference/androidx/security/crypto/EncryptedSharedPreferences
+                    SharedPreferences encryptedPreferences = null;
+                    try {
+                        encryptedPreferences = EncryptedSharedPreferences.create(
+                                "encrypted_credentials",
+                                finalMasterKeyAlias,
+                                context,
+                                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+                        );
+                    } catch (GeneralSecurityException | IOException e) {
+                        e.printStackTrace();
+                    }
 
-                // Encrypted Shared Preferences to store Username and Password
-                // https://developer.android.com/reference/androidx/security/crypto/EncryptedSharedPreferences
-                SharedPreferences encryptedPreferences = null;
-                try {
-                    encryptedPreferences = EncryptedSharedPreferences.create(
-                            "encrypted_credentials",
-                            finalMasterKeyAlias,
-                            context,
-                            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-                    );
-                } catch (GeneralSecurityException | IOException e) {
-                    e.printStackTrace();
+                    //SharedPreferences preferences = getSharedPreferences("MYPREFS", MODE_PRIVATE);
+
+                    String newUser = userName.getText().toString();
+                    String newPassword = password.getText().toString();
+                    String newEmail = email.getText().toString();
+
+                    assert encryptedPreferences != null;
+                    SharedPreferences.Editor editor = encryptedPreferences.edit();
+
+                    editor.putString(newUser + newPassword + "data", "Signed in as " + newUser + " ( " + newEmail + " )");
+                    editor.apply();
+
+                    Toast.makeText(context, "Account created, log in", Toast.LENGTH_SHORT).show();
+
+                    Intent loginScreen = new Intent(Register.this, MainActivity.class);
+                    startActivity(loginScreen);
+                } else {
+                    Toast.makeText(context, "Either username, password, or email are invalid", Toast.LENGTH_LONG).show();
                 }
-
-                //SharedPreferences preferences = getSharedPreferences("MYPREFS", MODE_PRIVATE);
-                
-                String newUser = userName.getText().toString();
-                String newPassword = password.getText().toString();
-                String newEmail = email.getText().toString();
-
-                assert encryptedPreferences != null;
-                SharedPreferences.Editor editor = encryptedPreferences.edit();
-
-                editor.putString(newUser + newPassword + "data", "Signed in as " + newUser + " ( " + newEmail + " )");
-                editor.apply();
-
-                Toast.makeText(context, "Account created, log in", Toast.LENGTH_SHORT).show();
-
-                Intent loginScreen = new Intent(Register.this, MainActivity.class);
-                startActivity(loginScreen);
-
             }
         });
     }
