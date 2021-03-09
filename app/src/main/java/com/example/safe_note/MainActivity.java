@@ -18,8 +18,19 @@ import java.security.GeneralSecurityException;
 
 public class MainActivity extends AppCompatActivity {
 
-    EditText etName, etPassword;
-    Button btnLogin, btnSignUp;
+    EditText etName; // Input for Username
+    EditText etPassword; // Input for password
+
+    Button btnLogin; // Login button
+    Button btnSignUp; // Register button
+
+    Context context; // Application context
+
+    String user; // etUsername as string
+    String password; // etPassword as string
+    String incorrectDetails;
+    String userDetails; // User credentials from encrypted shared preference
+    String display; // Comparable user credentials
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         btnLogin = (Button) findViewById(R.id.btnLogin);
         btnSignUp = (Button) findViewById(R.id.btnSignUp);
 
-        // shared preferences for Notes (not working, try savedInstanceState())
+        // Storing of Shared Preference key data to save info between activities
         SharedPreferences result = getSharedPreferences("TimedNote", Context.MODE_PRIVATE);
         String noteTitle = result.getString("Title", "");
         String noteBody = result.getString("Body", "");
@@ -42,25 +53,27 @@ public class MainActivity extends AppCompatActivity {
         timedNoteEditor.putString("Body", noteBody);
         timedNoteEditor.apply();
 
-
         String masterKeyAlias = null;
         try {
-            masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);
+            masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC); // Encryption key
         } catch (GeneralSecurityException | IOException e) {
             e.printStackTrace();
         }
         String finalMasterKeyAlias = masterKeyAlias;
 
-        Context context = getApplicationContext();
-
+        context = getApplicationContext();
         btnLogin.setOnClickListener(new View.OnClickListener() {
+            /**
+             * Once btnLogin is clicked, an encrypted_credentials shared preference file is created
+             * using the encryption key which will see if the key value data is the same as the key
+             * value data of user_details. If it is then the user will be allowed into the app since
+             * the username and password match.*
+             */
             @Override
             public void onClick(View v) {
-                String user = etName.getText().toString();
-                String password = etPassword.getText().toString();
-                String incorrectDetails = "Username or Password is Incorrect.";
-
-                //SharedPreferences preferences = getSharedPreferences("MYPREFS", MODE_PRIVATE);
+                user = etName.getText().toString();
+                password = etPassword.getText().toString();
+                incorrectDetails = "Username or Password is Incorrect.";
 
                 SharedPreferences encryptedPreferences = null;
                 try {
@@ -71,25 +84,26 @@ public class MainActivity extends AppCompatActivity {
                             EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
                             EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
                     );
-                } catch (GeneralSecurityException | IOException e) {
+                } catch (GeneralSecurityException | IOException e) { // Throw exception e
                     e.printStackTrace();
                 }
 
-                String userDetails = encryptedPreferences.getString(user + password + "data", incorrectDetails);
+                assert encryptedPreferences != null;
+                userDetails = encryptedPreferences.getString(user + password + "data", incorrectDetails);
                 SharedPreferences.Editor editor = encryptedPreferences.edit();
                 editor.putString("user_display", userDetails);
-                editor.apply();
+                editor.apply(); // Save shared preference
 
-                String display = encryptedPreferences.getString("user_display", "");
-
-
+                display = encryptedPreferences.getString("user_display", "");
                 Intent loginScreen;
                 Context context = getApplicationContext();
                 if (display.equals(incorrectDetails)){
-                    etName.setText("");
+                    etName.setText(""); // Reset EditText
                     etPassword.setText("");
-                    Toast.makeText(context, "Incorrect details, try again.", Toast.LENGTH_SHORT).show();
-                } else{
+                    Toast.makeText(context, "Incorrect details, try again.",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    // Open NotePage.java using implicit intent to change activity
                     loginScreen = new Intent(MainActivity.this, NotePage.class);
                     Toast.makeText(context, "Welcome back!", Toast.LENGTH_SHORT).show();
                     startActivity(loginScreen);
@@ -99,12 +113,15 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btnSignUp.setOnClickListener(new View.OnClickListener() {
+            /**
+             * Allows users to navigate to Register.java to create an account if they don't
+             * already have one, or want to create a new one
+             */
             @Override
             public void onClick(View v) {
                 Intent registerScreen = new Intent(MainActivity.this, Register.class);
                 startActivity(registerScreen);
             }
         });
-
     }
 }

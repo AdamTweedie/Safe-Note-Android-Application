@@ -9,7 +9,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 import android.view.View;
 
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKeys;
@@ -19,8 +18,17 @@ import java.security.GeneralSecurityException;
 
 public class Register extends AppCompatActivity {
 
-    EditText userName, password, email;
-    Button btnRegister;
+    EditText userName; // Store user input for username
+    EditText password; // Store user input for password
+    EditText email; // Store user input for email
+
+    String newUser; // userName as string
+    String newPassword; // password as string
+    String newEmail; // email as string
+
+    Button btnRegister; // Allows user to register an account with Safe-Note
+
+    Context context; // Application context
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,20 +42,28 @@ public class Register extends AppCompatActivity {
 
         String masterKeyAlias = null;
         try {
-            masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);
+            masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC); // Encryption key
         } catch (GeneralSecurityException | IOException e) {
             e.printStackTrace();
         }
         String finalMasterKeyAlias = masterKeyAlias;
 
-        Context context = getApplicationContext();
-
+        context = getApplicationContext();
         btnRegister.setOnClickListener(new View.OnClickListener() {
+            /**
+             * This on click listener prompts a conditional if statement.
+             * If registration information is valid, it creates an account, stores the relevant
+             * information in an encrypted shared preference and loads MainActivity.java via
+             * implicit intent.
+             * If registration information is incorrect a Toast message is displayed notifying the
+             * user that the registration information is incorrect.
+             * **/
             @Override
             public void onClick(View v) {
-                if (userName.length() > 3 && password.length() > 3 && email.getText().toString().contains("@")) {
+                if (userName.length() > 3 && password.length() > 3 &&
+                        email.getText().toString().contains("@")) {
+                    // Then details valid
                     // Encrypted Shared Preferences to store Username and Password
-                    // https://developer.android.com/reference/androidx/security/crypto/EncryptedSharedPreferences
                     SharedPreferences encryptedPreferences = null;
                     try {
                         encryptedPreferences = EncryptedSharedPreferences.create(
@@ -61,24 +77,25 @@ public class Register extends AppCompatActivity {
                         e.printStackTrace();
                     }
 
-                    //SharedPreferences preferences = getSharedPreferences("MYPREFS", MODE_PRIVATE);
-
-                    String newUser = userName.getText().toString();
-                    String newPassword = password.getText().toString();
-                    String newEmail = email.getText().toString();
+                    newUser = userName.getText().toString();
+                    newPassword = password.getText().toString();
+                    newEmail = email.getText().toString();
 
                     assert encryptedPreferences != null;
                     SharedPreferences.Editor editor = encryptedPreferences.edit();
+                    editor.putString(newUser + newPassword + "data", "Signed in as " + newUser +
+                            " ( " + newEmail + " )");
+                    editor.apply(); // Save shared preference
 
-                    editor.putString(newUser + newPassword + "data", "Signed in as " + newUser + " ( " + newEmail + " )");
-                    editor.apply();
+                    Toast.makeText(context, "Account created, log in",
+                            Toast.LENGTH_SHORT).show(); // Pop-up message
 
-                    Toast.makeText(context, "Account created, log in", Toast.LENGTH_SHORT).show();
-
-                    Intent loginScreen = new Intent(Register.this, MainActivity.class);
+                    Intent loginScreen = new Intent(Register.this,
+                            MainActivity.class); // Load MainActivity via implicit intent
                     startActivity(loginScreen);
                 } else {
-                    Toast.makeText(context, "Either username, password, or email are invalid", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "Either username, password, or email are invalid",
+                            Toast.LENGTH_LONG).show();
                 }
             }
         });
